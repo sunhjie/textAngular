@@ -414,7 +414,7 @@ textAngular.directive("textAngular", [
 				scope.displayElements.text.on('focus', _focusin);
 				_focusout = function(e){
 					// if we are NOT runnig an action and have NOT focussed again on the text etc then fire the blur events
-					// if(!scope._actionRunning && $document[0].activeElement !== scope.displayElements.html[0] && $document[0].activeElement !== scope.displayElements.text[0]){
+					if(!scope._actionRunning && $document[0].activeElement !== scope.displayElements.html[0] && $document[0].activeElement !== scope.displayElements.text[0]){
 						element.removeClass(scope.classes.focussed);
 						_toolbars.unfocus();
 						// to prevent multiple apply error defer to next seems to work.
@@ -423,7 +423,7 @@ textAngular.directive("textAngular", [
 							element.triggerHandler('blur');
 							scope.focussed = false;
 						}, 0);
-					// }
+					}
 					e.preventDefault();
 					return false;
 				};
@@ -942,7 +942,7 @@ textAngular.directive('textAngularToolbar', [
 					toolElement.attr('ng-disabled', 'isDisabled()');
 					toolElement.attr('tabindex', '-1');
 					// toolElement.attr('ng-click', 'executeAction()');
-					toolElement.attr('ng-mousedown', 'executeAction()');
+					toolElement.attr('ng-click', 'executeAction()');
 					toolElement.attr('ng-class', 'displayActiveToolClass(active)');
 
 					if (toolDefinition && toolDefinition.tooltiptext) {
