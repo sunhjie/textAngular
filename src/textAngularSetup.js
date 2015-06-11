@@ -15,7 +15,7 @@ angular.module('textAngularSetup', ['ui.bootstrap','textAngular'])
 		// ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
 		// ['justifyLeft','justifyCenter','justifyRight','indent','outdent'],
 		// ['html', 'insertImage', 'insertLink', 'insertVideo', 'wordcount', 'charcount']
-		['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'],
+		['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre'],
     ['bold','italics', 'ul', 'ol', 'insertImage','charcount']
 	],
 	classes: {
