@@ -6,7 +6,7 @@ Version 1.3.7
 
 See README.md or https://github.com/fraywing/textAngular/wiki for requirements and use.
 */
-angular.module('textAngularSetup', [])
+angular.module('textAngularSetup', ['ui.bootstrap','textAngular'])
 
 // Here we set up the global display defaults, to set your own use a angular $provider#decorator.
 .value('taOptions',  {
@@ -545,22 +545,100 @@ angular.module('textAngularSetup', [])
 		editorScope.showResizeOverlay($element);
 	};
 
-	taRegisterTool('insertImage', {
-		iconclass: 'fa fa-picture-o',
-		tooltiptext: taTranslations.insertImage.tooltip,
-		action: function(){
-			var imageLink;
-			imageLink = $window.prompt(taTranslations.insertImage.dialogPrompt, 'http://');
-			if(imageLink && imageLink !== '' && imageLink !== 'http://'){
-				return this.$editor().wrapSelection('insertImage', imageLink, true);
-			}
-		},
-		onElementSelect: {
-			element: 'img',
-			action: imgOnSelectAction
-		}
-	});
+	// taRegisterTool('insertImage', {
+	// 	iconclass: 'fa fa-picture-o',
+	// 	tooltiptext: taTranslations.insertImage.tooltip,
+	// 	action: function(){
+	// 		var imageLink;
+	// 		imageLink = $window.prompt(taTranslations.insertImage.dialogPrompt, 'http://');
+	// 		if(imageLink && imageLink !== '' && imageLink !== 'http://'){
+	// 			return this.$editor().wrapSelection('insertImage', imageLink, true);
+	// 		}
+	// 	},
+	// 	onElementSelect: {
+	// 		element: 'img',
+	// 		action: imgOnSelectAction
+	// 	}
+	// });
 
+  taRegisterTool('insertImage', {
+      iconclass: "fa fa-picture-o",
+      tooltiptext: taTranslations.insertImage.tooltip,
+      action: function($deferred, $document) {
+        var textAngular = this;
+        var savedSelection = rangy.saveSelection();
+        var modalInstance = $modal.open({
+          // Put a link to your template here or whatever
+          // template: '<div class="modal-header"><h3 class="modal-title">添加图片</h3></div><div class="modal-body"><div class="source_computer"><input type="radio" name="source" id="computer" ng-model="checked.type" value= 0 /><label for="computer">本地上传</label><input type="file" name="filename" id="filename-input" ng-file-select="richTextImgUpload($files)" accept="image/*" style="display: inline" ng-show="checked.type == 0"/></div><div class="sourse_web"><input type="radio" name="source" id="web" ng-model="checked.type" value= 1 /><label for="web">网络图片链接</label><input type="text" placeholder="http://" ng-model="img.url" ng-show="checked.type == 1" /></div></div><div class="modal-footer"><button class="btn btn-primary" ng-click="submit()">确定</button><button class="btn btn-warning" ng-click="cancel()">取消</button></div>',
+          template: '<div class="modal-header">'+
+                      '<h3 class="modal-title">添加图片</h3>'+
+                    '</div>'+
+                    '<div class="modal-body">'+
+                      '<div class="source_computer">'+
+                        '<input type="file" name="filename" id="filename-input" ng-file-select="richTextImgUpload($files)" accept="image/*" style="display:inline"/>'+
+                        '&nbsp;&nbsp;<span ng-show="upload_msg">{{upload_msg}}</span>'+
+                      '</div>'+
+                    '</div>'+
+                    '<div class="modal-footer">'+
+                      '<button class="btn btn-primary" ng-click="submit()" ng-show="computer_img_url" style="background:#03A9F4;border-color:#03A9F4">确定</button>'+
+                      '<button class="btn btn-primary" ng-hide="computer_img_url" style="background:#bdbdbd;border-color:#bdbdbd">确定</button>'+
+                      '<button class="btn btn-warning" ng-click="cancel()" style="background:#bdbdbd;border-color:#bdbdbd">取消</button>'+
+                    '</div>',
+          size: 'm',
+          controller: ['$modalInstance', '$scope', '$rootScope', 'FileUpload', 'toastr',
+            function($modalInstance, $scope, $rootScope, FileUpload, toastr) {
+              $scope.img = {
+                url: ''
+              };
+              $scope.submit = function() {
+                $rootScope.upload_msg='';
+                if($rootScope.computer_img_url){
+                  $modalInstance.close($rootScope.computer_img_url);
+                }
+                else{
+                  $modalInstance.close($scope.img.url);
+                }
+                $rootScope.computer_img_url='';
+              };
+              $scope.cancel = function () {
+                $rootScope.upload_msg='';
+                $modalInstance.dismiss('cancel');
+                $rootScope.computer_img_url='';
+              };
+              $scope.richTextImgUpload = function($files){
+                $scope.upload_msg = '正在上传...';
+                var repond = FileUpload.upload($files);
+                repond.then(function(response){
+                  $rootScope.computer_img_url = response;
+                  $scope.upload_msg = '图片上传成功';
+                },function(response){
+                  toastr.error("图片上传失败！");
+                })
+              }
+
+            }
+          ]
+        });
+        var activeElement = document.activeElement;
+        modalInstance.result.then(function(imgUrl) {
+          if(imgUrl){
+            rangy.restoreSelection(savedSelection);
+            console.log('enter modalInstance result - imgUrl: ', imgUrl);
+            textAngular.$editor().wrapSelection('insertImage', imgUrl, true);
+            $deferred.resolve();
+          }
+        }, function(reason){
+          console.log('activeElement is ', activeElement);
+          // activeElement.focus();
+        });
+
+        return false;
+      }
+      // onElementSelect: {
+      //   element: 'img',
+      //   action: imgOnSelectAction
+      // }
+    });
 
 	taRegisterTool('insertVideo', {
 		iconclass: 'fa fa-youtube-play',

@@ -17,7 +17,7 @@ angular.module('textAngularSetup', ['ui.bootstrap','textAngular'])
 		// ['html', 'insertImage', 'insertLink', 'insertVideo', 'wordcount', 'charcount']
 
 
-		['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'pre'],
+		['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'],
     ['bold','italics', 'ul', 'ol', 'insertImage','charcount']
 	],
 	classes: {
