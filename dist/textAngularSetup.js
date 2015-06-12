@@ -180,7 +180,7 @@ angular.module('textAngularSetup', ['ui.bootstrap','textAngular'])
 		tooltip: 'Display characters Count'
 	}
 })
-.run(['taRegisterTool', '$window', 'taTranslations', 'taSelection', function(taRegisterTool, $window, taTranslations, taSelection){
+.run(['taRegisterTool', '$window', 'taTranslations', 'taSelection', '$modal', function(taRegisterTool, $window, taTranslations, taSelection, $modal){
 	taRegisterTool("html", {
 		iconclass: 'fa fa-code',
 		tooltiptext: taTranslations.html.tooltip,
